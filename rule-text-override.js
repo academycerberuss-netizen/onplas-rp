@@ -6,10 +6,12 @@
   const previousClarification =
     'Вампиры могут маскировать клыки, скрывая их, но зубы остаются заострёнными. Специальные капли ведьмы меняют цвет глаз на тот, который был до обращения.';
   const vampireClarification =
-    'ВАЖНО: Вампиры могут скрывать клыки, но зубы остаются заострёнными. Специальные капли у ведьмы меняют цвет глаз на тот, который был до обращения. Капли — сюжетный инструмент, их не нужно покупать в магазине бота.';
+    'ВАЖНО: Вампиры могут скрывать клыки, но зубы остаются заострёнными. Специальные капли у ведьмы меняют цвет глаз на тот, который был до обращения. Капли — сюжетный инструмент, их не нужно покупать в магазине бота. При превращении в летучую мышь и обратно в человека одежда вампира не восстанавливается.';
   const metagameRuleTitle = 'Знание персонажа';
   const metagameRuleText =
     'Персонаж не узнаёт, что перед ним вампир или оборотень, только потому, что игрок так решил. Для этого нужны игровые основания.';
+  const aiPostRuleTitle = 'ИИ в РП';
+  const aiPostRuleText = 'Запрещено использовать в РП посты, сгенерированные ИИ.';
   const suretyReplacements = [
     [
       'Оборотню сообщают о её основном действии, без понимания личной связи метка не закрепится.',
@@ -119,8 +121,9 @@
       section = section.parentElement;
     }
     const ruleList = section?.querySelector(':scope > div.flex.flex-col.gap-4');
-    if (!section || !ruleList || section.querySelector('[data-metagame-rule]')) return;
+    if (!section || !ruleList) return;
 
+    if (!section.querySelector('[data-metagame-rule]')) {
     const card = document.createElement('article');
     card.dataset.metagameRule = 'true';
     card.className =
@@ -142,6 +145,32 @@
 
     card.append(accent, title, text);
     section.insertBefore(card, ruleList.nextSibling);
+    }
+
+    if (!section.querySelector('[data-ai-post-rule]')) {
+      const aiCard = document.createElement('article');
+      aiCard.dataset.aiPostRule = 'true';
+      aiCard.className =
+        'relative mt-4 overflow-hidden border border-[#b3122a]/25 bg-gradient-to-b from-[#120d16]/80 to-[#0a0810]/80 px-5 py-5 backdrop-blur-sm sm:px-8 sm:py-6';
+
+      const aiAccent = document.createElement('span');
+      aiAccent.setAttribute('aria-hidden', 'true');
+      aiAccent.className =
+        'absolute left-0 top-0 h-full w-[2px] bg-gradient-to-b from-transparent via-[#ff3b54] to-transparent';
+
+      const aiTitle = document.createElement('h3');
+      aiTitle.className = 'font-heading text-lg tracking-wide text-[#ff8e8e] sm:text-xl';
+      aiTitle.textContent = aiPostRuleTitle;
+
+      const aiText = document.createElement('p');
+      aiText.className =
+        'mt-3 font-body text-base leading-relaxed text-[#e6dcd2]/90 sm:text-lg';
+      aiText.textContent = aiPostRuleText;
+
+      aiCard.append(aiAccent, aiTitle, aiText);
+      const metagameCard = section.querySelector('[data-metagame-rule]');
+      section.insertBefore(aiCard, metagameCard ? metagameCard.nextSibling : ruleList.nextSibling);
+    }
   };
 
   const root = document.documentElement;
